@@ -5,20 +5,16 @@ import sys
 import HiCutils
 import utils
 
-if sys.argv[1]=="Boost Hi-C":
+if sys.argv[1]=="Boost-HiC":
 	basefile=sys.argv[2]
-	species=sys.argv[3]
-	centromericdict=utils.LoadChrCentrom(sys.argv[4])
-	resolution=float(sys.argv[5])
-	basematfiltered=sys.argv[6]
-	boostedmat=sys.argv[7]
+	basematfiltered=sys.argv[3]
+	boostedmat=sys.argv[4]
+	posoutname=sys.argv[5]
 	chrlist=utils.dictchr[species]
 	#load 
 	fh5 = h5py.File(basefile, "r")
 	chrmat=np.array(fh5['data'])
 	fh5.close()
-	poscentromfull=centromericdict[i]
-	poscentromresoluted=int(np.ceil(poscentromfull/resolution))
 	#filt
 	pos_out=HiCutils.get_outliers(chrmat)
 	chrmat=chrmat[np.ix_(~pos_out, ~pos_out)]
@@ -34,13 +30,12 @@ if sys.argv[1]=="Boost Hi-C":
 	fh5 = h5py.File(boostedmat, "w")
 	fh5['data']=boosted
 	fh5.close()
-	utils.savematrixasfilelist3(pos_out,repositoryout+"_posout.txt")
+	utils.savematrixasfilelist3(pos_out,posoutname)
 elif sys.argv[1]=="Sample":
 	baserep=sys.argv[2]
 	species=sys.argv[3]
 	repositoryout=sys.argv[4]
-	centromericdict=utils.LoadChrCentrom(sys.argv[5])
-	resolution=float(sys.argv[6])
+	resolution=float(sys.argv[5])
 	chrlist=utils.dictchr[species]
 	for i in chrlist:
 		print("i: ",i)
@@ -48,8 +43,6 @@ elif sys.argv[1]=="Sample":
 		fh5 = h5py.File(filenamein, "r")
 		chrmat=np.array(fh5['data'])
 		fh5.close()
-		poscentromfull=centromericdict[i]
-		poscentromresoluted=int(np.ceil(poscentromfull/resolution))
 		if resolution>10000:
 			print('on va biner de 10000 a ',resolution)
 			chrmat=HiCutils.binamatrixin2d(chrmat,10000,resolution)
