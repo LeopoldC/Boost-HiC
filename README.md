@@ -22,14 +22,28 @@ The bin are described in a separated bed file which give the genomic coordinate 
 
 In a first step, the contact map are convert in hdf5 by the pipeline.
 
-Output :
-=================
--The raw matrix without filtered bin by the procedure.
--The BoostHiC matrix, filtered two.
--pos out : the position of every filtered bin in myarray.hdf5
-
 How to use it
 =================
+The script is made to be most easy to use ad possible, just eddit the file main.py and run it as :
+python main.py 
 
-python main.py "Boost-HiC" myarray.hdf5 myarray_filtered.hdf5 myarray_boosted.hdf5 pos_outname.txt
+Important parameter are :
+-bedfilename : bed file of genomic coordinate of each bin
+-Operation : 'Boost' or 'Sample'
+-repositoryout : where output file are stored
+
+-resolution : default is 10000 basepair, change it if you need
+-alpha : the alpha used to Boost-HiC
+
+Some usefull tool are available in HiCtools.py if you need to made your own script.
+
+Output :
+=================
+Every ouput contact map are stored in hdf5 with the key 'data' in the hdf5 dict. 
+
+-inputmat.hdf5 : The contact map that is load in .matrix at the begin, just convert in hdf5
+-inputmat_filtered.hdf5 : The original contact map with some filtered bin
+-filteredbin.txt : list of raw/col that are filtered or not in the contact map as a boolean list.
+-boostedmat.hdf5 : The input mat improved by BoostHiC procedure.
+
 

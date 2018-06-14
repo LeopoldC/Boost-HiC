@@ -18,8 +18,6 @@ repositoryout='/run/media/carron/0ac0fffa-3350-431d-b1d1-865f8a21db21/data/Hi-C/
 resolution=10000 #default : 10kb
 achr="chr16"
 alpha=0.2
-species="mouse"
-chrlist=utils.dictchr[species]
 ###
 
 
@@ -35,7 +33,7 @@ def Sample(amat,repositoryout):
 		print("Value of sample",j)
 		chrmat_s=np.copy(amat)
 		chrmat=HiCutils.downsample_basic(chrmat_s,j)
-		fh5 = h5py.File(repositoryout+"inputmat_sampleat_"+str(j)+".hdf5", "w")
+		fh5 = h5py.File(repositoryout+"inputmat_sampleat_"+str(j)+"_percent.hdf5", "w")
 		fh5['data'] = chrmat
 		fh5.close()
 
