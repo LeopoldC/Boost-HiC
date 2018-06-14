@@ -9,7 +9,7 @@ import convert
 
 ### YOU ARE SUPPOSED TO ONLY MODIFY VALUE HERE ###
 #input file
-bedfilename='/users/invites/carron/Documents/Boost-HiC/test_dataset/rep1_10000_abs.bed'
+bedfilename='/users/invites/carron/Documents/Boost-HiC/test_dataset/mouse10kb_fend.bed'
 matrixfilename='/users/invites/carron/Documents/Boost-HiC/test_dataset/chr16ES_10000.matrix'
 Operation='Sample'
 repositoryout='/run/media/carron/0ac0fffa-3350-431d-b1d1-865f8a21db21/data/Hi-C/Mouse/boyan/test/'
