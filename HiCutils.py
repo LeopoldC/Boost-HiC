@@ -18,10 +18,10 @@ import utils
 #############################################################################
 def windowssize2(n):
 	"""
-	size of windows in contact probability generator
-	little bit tricky for complexity optimisation
+	Size of windows in contact probability generator
+	Little bit tricky for complexity optimisation
 	VdT : index of every bin in Vs
-	Vs: size of every probability blow
+	Vs : Size of every probability bloc
 	"""
 	Vs=np.ones(n)
 	#generate Vs
@@ -45,7 +45,7 @@ def windowssize2(n):
 	Lj-=1
 	i-=1
 	Vs=Vs[0:i]
-	print(Lj,n,i,Z,k,np.sum(Vs))
+	#print(Lj,n,i,Z,k,np.sum(Vs))
 	#
 	VdT=np.ones(n)
 	i=0
@@ -61,7 +61,7 @@ def windowssize2(n):
 	
 def contactprobability(amat,Vs):
 	"""
-	return contact probability of an array
+	Return contact probability of an array
 	"""
 	L=len(Vs)
         matsize=np.shape(amat)
@@ -79,12 +79,12 @@ def contactprobability(amat,Vs):
 		i+=1	
         return probability
 
+
 def adjustPdS(normmat,boostmat):
 	"""
-	Adjusting boostmap contact probability with normmat one
+	Adjusting boostmat contact probability with normmat one
 	"""
 	matsize=np.shape(normmat)
-	print(matsize[0])
 	VdT,Vs=windowssize2(matsize[0])
 	PC_base=contactprobability(normmat,Vs)
 	PC_FF=contactprobability(boostmat,Vs)
@@ -102,10 +102,13 @@ def adjustPdS(normmat,boostmat):
                 j=i
 	return returnmat
 
+
 ######
 
-
-def fastFloyd(contact):    
+def fastFloyd(contact):
+	"""
+	Apply shotest path algorithm to a distance array
+	"""    
 	n = contact.shape[0]    
 	shortest = contact    
 	for k in range(n):        
@@ -116,7 +119,9 @@ def fastFloyd(contact):
 
 def boost(normmat,alpha):
 	"""
-	Boost a mat
+	Made Shortest Path on normalise(SCN) contact map at given alpha
+	-made all transition from contact to distanct map, return contact one
+	Return the number of rewired contact too
 	"""
         matsize=np.shape(normmat)
         FFmat=np.power(fastFloyd(1/np.power(normmat.copy(),alpha)),-1/alpha)
@@ -130,7 +135,7 @@ def boost(normmat,alpha):
 
 def makedmat():
 	"""
-	sub of find alpha
+	Sub of find alpha
 	"""
 	d=dict()
 	d['E']=list()
@@ -141,7 +146,7 @@ def makedmat():
 
 def initdmat(d,nr,boostmat,actualalpha,step):
 	"""
-	sub of find alpha
+	Sub of find alpha
 	"""
 	d['E']=[nr,boostmat,actualalpha-3*step]
 	d['A']=[nr,boostmat,actualalpha-2*step]
@@ -151,7 +156,7 @@ def initdmat(d,nr,boostmat,actualalpha,step):
 
 def movestepfromd(d,nr,boostmat,actualalpha):
 	"""
-	sub of find alpha
+	Sub of find alpha
 	"""
 	d['E']=d['A']
 	d['A']=d['B']
@@ -161,25 +166,30 @@ def movestepfromd(d,nr,boostmat,actualalpha):
 
 def continuefromd(d):
 	"""
-	sub of find alpha
+	Sub of find alpha
 	"""
 	Dea=d['A'][0]-d['E'][0]
 	Dab=d['B'][0]-d['A'][0]
 	Dbc=d['C'][0]-d['B'][0]
-	print("D1 : ",Dea,Dab,Dbc,Dbc-Dab,Dab-Dea)
+	#print("D1 : ",Dea,Dab,Dbc,Dbc-Dab,Dab-Dea)
 	if (Dbc-Dab)>(Dab-Dea):
 		return True
 	return False
 
 def printthedict(d):
 	"""
-	sub of find alpha
+	Sub of find alpha
 	"""
 	print(d['E'][0],d['A'][0],d['B'][0],d['C'][0])
 
 ###
 
 def findalpha(amat,froma,basestep):
+	"""
+	Find the best alpha for the Boost-HiC algorithm
+	Entry : A contact map, a alpha to start, step of alpha increase
+	Ouput : Contact map at current best alpha, best alpha
+	"""
         #init param
         alpha=froma
 	step=basestep
@@ -196,7 +206,7 @@ def findalpha(amat,froma,basestep):
 		newmat,nrnew=boost(normmat,alpha)
 		StepDict=movestepfromd(StepDict,nrnew,newmat,alpha)
 		alpha+=step
-	return StepDict['B'][1],amat,StepDict['B'][2]
+	return StepDict['B'][1],StepDict['B'][2]
 
 
                        
@@ -204,8 +214,9 @@ def findalpha(amat,froma,basestep):
 
 def binamatrixin2d(anumpyarray,resolutionfrom,resolutionto):
 	"""
-	in : A numpy array , number of bin in raw and in col
-	out : the matrix binned
+	Change resolution of a HiC map 
+	Entry : A numpy array , number of bin in raw and in col
+	Output : The given matrix a the new resolution
 	"""
 	convertionfactor=np.ceil(resolutionto/resolutionfrom)
 	s=anumpyarray.shape
@@ -347,24 +358,23 @@ def divide_diag(data, mean = True):
 ###############################################################################
 
 def downsample_basic(contact, k):
-	"""
-	-make binomial sampling on each contact
-	-k has to be between 1 and 100
-	"""
-	B = np.zeros(contact.shape)
-	S = contact.sum()
-	i, j = 0, 0
-	L = contact.shape[0]
-	while i < L:
-		while j < L:
-			if contact[i, j] != 0:
-				B[i, j] = npr.binomial(contact[i, j], k*1.0/100.)
-			j += 1
-		i += 1
-		j = i
-	B = B + B.T
-	S = B.sum()
-	return B
+	if k==100:
+		return contact
+	else :
+		B = np.zeros(contact.shape)
+		S = contact.sum()
+		i, j = 0, 0
+		L = contact.shape[0]
+		while i < L:
+			while j < L:
+				if contact[i, j] != 0:
+					B[i, j] = np.random.binomial(contact[i, j], k*1.0/100.)
+				j += 1
+			i += 1
+			j = i
+		B = B + B.T
+		S = B.sum()
+		return B
 
 def downsample_dicho(mat, k):
 	matA=downsample_basic(mat, k)
