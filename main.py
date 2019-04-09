@@ -17,7 +17,7 @@ repositoryout='/run/media/carron/0ac0fffa-3350-431d-b1d1-865f8a21db21/data/Hi-C/
 #default parameter
 resolution=10000 #default : 10kb
 achr="chr16"
-alpha=0.2
+alpha=0.2 #AFTER a lot of test : 0.24 is always a good and safe compromise, if you doubt use this value
 ###
 
 
