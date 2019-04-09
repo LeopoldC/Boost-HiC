@@ -27,7 +27,7 @@ def windowssize2(n):
 	#generate Vs
 	i=1
 	while i<n:
-		Vs[i]=Vs[i-1]*1.01
+		Vs[i]=Vs[i-1]*1.01 #TAKE CARE OF THIS VALUE
 		i+=1
 	Vs=np.floor(Vs) #not the reel one at this step
 	k=0
