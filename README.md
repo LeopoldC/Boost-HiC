@@ -2,7 +2,7 @@
 
 Software requiered
 =================
-Boost-HiC current implementation is in python 2.7 and need the current list of package :
+Boost-HiC current implementation is in python 3 and need the current list of package :
 -h5py
 -numpy
 -copy
