@@ -64,11 +64,11 @@ def contactprobability(amat,Vs):
 	Return contact probability of an array
 	"""
 	L=len(Vs)
-        matsize=np.shape(amat)
-        probability=np.zeros(L)
-        i=0
+	matsize=np.shape(amat)
+	probability=np.zeros(L)
+	i=0
 	K=0
-        while i<L:
+	while i<L:
 		j=0
 		avec=np.array(list())
 		while j<Vs[i]:
@@ -77,7 +77,7 @@ def contactprobability(amat,Vs):
 			K+=1
 		probability[i]=np.mean(avec)
 		i+=1	
-        return probability
+	return probability
 
 
 def adjustPdS(normmat,boostmat):
@@ -91,15 +91,15 @@ def adjustPdS(normmat,boostmat):
 	returnmat=np.copy(boostmat)
 	#adjustement : a l'air ok!
 	i=0
-        j=0
-        while i<matsize[0]: 
+	j=0
+	while i<matsize[0]: 
 		adjust=PC_base[int(VdT[i])]/PC_FF[int(VdT[i])]
-                while j<matsize[1]:
-                        returnmat[j-i,j]=boostmat[j-i,j]*(adjust)
-                        returnmat[j,j-i]=boostmat[j,j-i]*(adjust)
-                        j+=1
-                i+=1
-                j=i
+		while j<matsize[1]:
+			returnmat[j-i,j]=boostmat[j-i,j]*(adjust)
+			returnmat[j,j-i]=boostmat[j,j-i]*(adjust)
+			j+=1
+		i+=1
+		j=i
 	return returnmat
 
 
@@ -108,13 +108,13 @@ def adjustPdS(normmat,boostmat):
 def fastFloyd(contact):
 	"""
 	Apply shotest path algorithm to a distance array
-	"""    
-	n = contact.shape[0]    
-	shortest = contact    
-	for k in range(n):        
-		i2k = np.tile(shortest[k,:], (n, 1))        
-		k2j = np.tile(shortest[:, k], (n, 1)).T        
-		shortest = np.minimum(shortest, i2k + k2j)    
+	"""
+	n = contact.shape[0]
+	shortest = contact
+	for k in range(n):
+		i2k = np.tile(shortest[k,:], (n, 1))
+		k2j = np.tile(shortest[:, k], (n, 1)).T
+		shortest = np.minimum(shortest, i2k + k2j)
 	return shortest
 
 def boost(normmat,alpha):
@@ -123,12 +123,12 @@ def boost(normmat,alpha):
 	-made all transition from contact to distanct map, return contact one
 	Return the number of rewired contact too
 	"""
-        matsize=np.shape(normmat)
-        FFmat=np.power(fastFloyd(1/np.power(normmat.copy(),alpha)),-1/alpha)
+	matsize=np.shape(normmat)
+	FFmat=np.power(fastFloyd(1/np.power(normmat.copy(),alpha)),-1/alpha)
 	test=np.absolute(normmat-FFmat)
 	nbo10=len(np.where(test>0.000000000000001)[0])
 	returnmat=np.copy(FFmat)
-        return returnmat,nbo10
+	return returnmat,nbo10
 
 
 ### set of sub for the boost-hic algo
@@ -190,8 +190,8 @@ def findalpha(amat,froma,basestep):
 	Entry : A contact map, a alpha to start, step of alpha increase
 	Ouput : Contact map at current best alpha, best alpha
 	"""
-        #init param
-        alpha=froma
+	#init param
+	alpha=froma
 	step=basestep
 	StepDict=makedmat()
 	normmat=np.copy(amat)
@@ -208,8 +208,7 @@ def findalpha(amat,froma,basestep):
 		alpha+=step
 	return StepDict['B'][1],StepDict['B'][2]
 
-
-                       
+  
 #############################################################################
 
 def binamatrixin2d(anumpyarray,resolutionfrom,resolutionto):
@@ -326,7 +325,7 @@ def clean_out(data, pos_out):
 	containing booleans indicating for each position True if this bin is
 	a outlier, and False if this bin is not.
 	"""
-	data[pos_out] = 0
+data[pos_out] = 0
 	data[:, pos_out] = 0
 	return data
 
@@ -334,26 +333,24 @@ def clean_out(data, pos_out):
 
 #############################################################################
 def divide_diag(data, mean = True):
-    """
-    Divide by the sum of diag if mean = False
-    Divide by the mean of diag if mean = True
-    """
-    # Dimension of data
-    dim = data.shape[0]
-
-    for k in range(-dim + 1, dim):
-        diagonal = np.diag(data, k)
-        if mean == False :
-            div = float(np.maximum(1, diagonal.sum()))
-        else :
-            # For a given diagonal, take the mean of the non-null element
-            ## To estimate if the number of contact is above or below the
-            ## mean of contact for this genomic distance
-            div = np.nan_to_num(float(diagonal[diagonal != 0].mean()))
-            if div == 0:
-                div = 1
-        data += np.diagflat(-diagonal + diagonal / div, k)
-    return data
+	"""
+	Divide by the sum of diag if mean = False
+	Divide by the mean of diag if mean = True
+	"""
+	# Dimension of data
+	dim = data.shape[0]
+	for k in range(-dim + 1, dim):
+		diagonal = np.diag(data, k)
+		if mean == False :
+			div = float(np.maximum(1, diagonal.sum()))
+		else :
+			# For a given diagonal, take the mean of the non-null element
+			## To estimate if the number of contact is above or below the mean of contact for this genomic distance
+			div = np.nan_to_num(float(diagonal[diagonal != 0].mean()))
+		if div == 0:
+			div = 1
+		data += np.diagflat(-diagonal + diagonal / div, k)
+	return data
 
 ###############################################################################
 
@@ -383,36 +380,13 @@ def downsample_dicho(mat, k):
 	return matA,matB
 
 
-def SCN(D, max_iter = 10, mean = True):    
-	# Iteration over max_iter    
-	for i in range(max_iter):        
-		D /= np.maximum(1, D.sum(axis = 0))       
-		D /= np.maximum(1, D.sum(axis = 1)[:, None])    
+def SCN(D, max_iter = 10, mean = True):
+	# Iteration over max_iter
+	for i in range(max_iter):
+		D /= np.maximum(1, D.sum(axis = 0))
+		D /= np.maximum(1, D.sum(axis = 1)[:, None])
 		# To make matrix symetric again   
 	return (D + D.T)/2 
-
-def SCNandOE(D, max_iter = 10, after = 1, mean = True):
-    """
-    SCN method to normalize contact map.
-    Entry :
-        - Matrix  of contact map
-        - max_iteration of algorithm
-        - after : 1 if diagonal is divided after iterations, 0 to divide for each iteration
-        - mean : if set to true, each diagonal is divided by its mean. If set to false, each diagonal is divided by its sum
-    """
-    # Cpy of D
-    data = D
-    # Iteration over max_iter
-    for i in range(max_iter):
-        data /= np.maximum(1, data.sum(axis = 0))
-        data /= np.maximum(1, data.sum(axis = 1)[:, None])
-        if after == 0:
-            divide_diag(data, mean = mean)
-    if after == 1:
-        divide_diag(data, mean = mean)
-    # To make matrix symetric again
-    return (data + data.T)/2
-
 
 def observed_expected(Hicmat):
 	"""
